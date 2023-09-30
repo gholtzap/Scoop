@@ -122,7 +122,7 @@ export default function Home() {
                                         ></path>
                                     </svg>
                                 </span>
-                                Star on Github
+                                Github Repository
                             </Link>
                         </motion.div>
                         <motion.div
@@ -135,7 +135,7 @@ export default function Home() {
                             }}
                         >
                             <Link
-                                href="/demo"
+                                href="/"
                                 className="group rounded-full px-4 py-2 text-[13px] font-semibold transition-all flex items-center justify-center bg-[#01453D] text-[#25D0AB] no-underline active:scale-95 scale-100 duration-75"
                                 style={{
                                     boxShadow: "0 1px 1px #01453D, 0 1px 3px #01453D",
