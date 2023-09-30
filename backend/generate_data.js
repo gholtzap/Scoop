@@ -1,10 +1,3 @@
-// ###############################################################################
-
-
-// ###############################################################################
-
-
-
 const mongoose = require('mongoose');
 const fs = require('fs');
 const csv = require('csv-parser');
@@ -53,13 +46,13 @@ db.once('open', function () {
         .on('end', async () => {
             for (const row of results) {
                 const zip = row.ZIP_CODE;
-                const population = Number(row.POPULATION); 
-                const symptoms = generateRandomSymptoms();
+                const population = Number(row.POPULATION);
+                const symptoms = generateRandomSymptoms(population);
                 try {
                     await Symptom.findOneAndUpdate(
                         { zip: zip },
                         {
-                            population: population,  
+                            population: population,
                             symptoms: symptoms
                         },
                         { upsert: true }
@@ -70,7 +63,7 @@ db.once('open', function () {
                 }
             }
         });
-        
+
 });
 
 
@@ -78,28 +71,42 @@ function getRandomInt(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-function generateRandomSymptoms() {
+function getRandomExponential(lambda) {
+    return -Math.log(1.0 - Math.random()) / lambda;
+}
+
+function getScaledExponential(lambda, population) {
+    const percentage = getRandomExponential(lambda);
+    const scaledValue = Math.floor(percentage * population);
+    return scaledValue;
+}
+
+
+function generateRandomSymptoms(population) {
+
+    const lambda = 5;
+
     return {
-        fever: getRandomInt(0, 100),
-        fatigue: getRandomInt(0, 100),
-        cough: getRandomInt(0, 100),
-        shortnessOfBreath: getRandomInt(0, 100),
-        soreThroat: getRandomInt(0, 100),
-        runnyNose: getRandomInt(0, 100),
-        bodyAches: getRandomInt(0, 100),
-        headache: getRandomInt(0, 100),
-        chills: getRandomInt(0, 100),
-        nausea: getRandomInt(0, 100),
-        diarrhea: getRandomInt(0, 100),
-        lossOfAppetite: getRandomInt(0, 100),
-        sweating: getRandomInt(0, 100),
-        jointPain: getRandomInt(0, 100),
-        swollenLymphNodes: getRandomInt(0, 100),
-        rash: getRandomInt(0, 100),
-        abdominalPain: getRandomInt(0, 100),
-        dizziness: getRandomInt(0, 100),
-        lossOfTasteOrSmell: getRandomInt(0, 100),
-        chestPain: getRandomInt(0, 100),
+        fever: getScaledExponential(lambda, population),
+        fatigue: getScaledExponential(lambda, population),
+        cough: getScaledExponential(lambda, population),
+        shortnessOfBreath: getScaledExponential(lambda, population),
+        soreThroat: getScaledExponential(lambda, population),
+        runnyNose: getScaledExponential(lambda, population),
+        bodyAches: getScaledExponential(lambda, population),
+        headache: getScaledExponential(lambda, population),
+        chills: getScaledExponential(lambda, population),
+        nausea: getScaledExponential(lambda, population),
+        diarrhea: getScaledExponential(lambda, population),
+        lossOfAppetite: getScaledExponential(lambda, population),
+        sweating: getScaledExponential(lambda, population),
+        jointPain: getScaledExponential(lambda, population),
+        swollenLymphNodes: getScaledExponential(lambda, population),
+        rash: getScaledExponential(lambda, population),
+        abdominalPain: getScaledExponential(lambda, population),
+        dizziness: getScaledExponential(lambda, population),
+        lossOfTasteOrSmell: getScaledExponential(lambda, population),
+        chestPain: getScaledExponential(lambda, population),
     };
 }
 

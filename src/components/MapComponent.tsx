@@ -10,7 +10,9 @@ interface SymptomData {
     symptoms: {
         [key: string]: number;
     };
+    population: number;
 }
+
 
 const customIcon = new L.Icon({
     iconUrl: require('leaflet/dist/images/marker-icon.png'),
@@ -22,29 +24,18 @@ const customIcon = new L.Icon({
     shadowSize: [41, 41]
 });
 
-async function fetchSymptomsByZip(zip: string) {
+async function fetchSymptomsByZip(zip: string): Promise<SymptomData | null> {
     try {
         const response = await fetch(`${SERVER_URL}/symptoms/${zip}`);
         const data = await response.json();
-        return data;
+        return {
+            zip: data.zip,
+            symptoms: data.symptoms,
+            population: data.population
+        };
     } catch (error) {
         console.error("Error fetching symptoms:", error);
-    }
-}
-
-async function fetchSymptomAnalysis(summary: string) {
-    try {
-        const response = await fetch(`${SERVER_URL}/analyze`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ summary })
-        });
-        const data = await response.json();
-        return data.insight;
-    } catch (error) {
-        console.error("Error fetching analysis:", error);
+        return null;
     }
 }
 
@@ -72,44 +63,39 @@ function MapComponent() {
 
     function GeoJSONLayer() {
         const map = useMap();
-        const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
-    
+
         useEffect(() => {
             if (geojsonData) {
-                if (!geoJsonLayerRef.current) {
-                    geoJsonLayerRef.current = L.geoJSON(geojsonData, {
-                        onEachFeature: (feature, layer) => {
-                            layer.on('click', async (e) => {
-                                map.dragging.disable();
-                                map.doubleClickZoom.disable();
-                                map.scrollWheelZoom.disable();
-    
-                                const zipCode = feature.properties.ZIP_CODE;
-                                const data = await fetchSymptomsByZip(zipCode);
-                                const analysis = await fetchOutbreakAnalysis(zipCode);
-                                setSelectedZipData(data);
-                                setSelectedAnalysis(analysis);
-    
-                                const popupContent = data
-                                    ? `ZIP Code: ${zipCode} - Symptoms: ${JSON.stringify(data.symptoms)} - Analysis: ${analysis}`
-                                    : `ZIP Code: ${zipCode}`;
-    
-                                map.dragging.enable();
-                                map.doubleClickZoom.enable();
-                                map.scrollWheelZoom.enable();
-    
-                                layer.bindPopup(popupContent).openPopup();
-                            });
-                        }
-                    }).addTo(map);
-                }
+                L.geoJSON(geojsonData, {
+                    onEachFeature: (feature, layer) => {
+                        layer.on('click', async (e) => {
+                            e.originalEvent.preventDefault();
+
+                            const zipCode = feature.properties.ZIP_CODE;
+                            const data = await fetchSymptomsByZip(zipCode);
+                            let analysis = await fetchOutbreakAnalysis(zipCode);
+
+                            if (analysis.includes("'None'")) {
+                                analysis = 'None';
+                            }
+
+                            setSelectedZipData(data);
+                            setSelectedAnalysis(analysis);
+
+                            const symptomsContent = data?.symptoms ? `Symptoms: ${JSON.stringify(data.symptoms)}` : '';
+                            const populationContent = data?.population ? `Population: ${data.population}` : '';
+
+                            // popup with all data - use for debugging
+                            // const popupContent = `ZIP Code: ${zipCode} ${symptomsContent} ${populationContent} - Analysis: ${analysis}`;
+
+                            const popupContent = `ZIP Code: ${zipCode} \nAnalysis: ${analysis}`;
+
+                            layer.bindPopup(popupContent, { autoPan: false, offset: L.point(0, -20) }).openPopup();
+                        });
+
+                    }
+                }).addTo(map);
             }
-    
-            return () => {
-                if (geoJsonLayerRef.current) {
-                    map.removeLayer(geoJsonLayerRef.current);
-                }
-            };
         }, [map, geojsonData]);
 
         return (
@@ -143,5 +129,6 @@ function MapComponent() {
         </MapContainer>
     );
 }
+
 
 export default MapComponent;

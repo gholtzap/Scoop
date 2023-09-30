@@ -36,8 +36,10 @@ const symptomSchema = new mongoose.Schema({
     symptoms: {
         type: Object,
         required: true
-    }
+    },
+    population: Number
 });
+
 const Symptom = mongoose.model('Symptom', symptomSchema, 'zips');
 
 app.use(cors());
@@ -76,7 +78,7 @@ app.post('/analyze', async (req, res) => {
                 { role: "user", content: summary }
             ]
         });
-        
+
         const insight = completion.choices[0].message.content.trim();
         res.json({ insight });
     } catch (error) {
@@ -89,10 +91,10 @@ app.post('/analyze', async (req, res) => {
 async function getOutbreakAnalysis(zip, population, symptoms) {
 
     const symptomSummary = Object.entries(symptoms)
-                             .map(([symptom, count]) => `${count} out of ${population} people have ${symptom}`)
-                             .join(', ');
+        .map(([symptom, count]) => `${count} out of ${population} people have ${symptom}`)
+        .join(', ');
 
-const summary = `In my simulation video game, there is an area with a population of ${population} where ${symptomSummary}. 
+    const summary = `In my simulation video game, there is an area with a population of ${population} where ${symptomSummary}. 
 Based on these symptoms, what real-life disease might be prevalent in my video game simulation? 
 Note that there can be no significant disease prevalent. You are allowed to return 'None'. If the number of symptoms is not significant
 enough compared to the population, you should return 'None'.
@@ -104,16 +106,14 @@ The result is Common Cold.`;
         { role: "system", content: "You are a helpful assistant." },
         { role: "user", content: summary }
     ];
-    
+
     const result = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: conversation
     });
-    
+
     return result.choices[0].message.content;
 }
-
-
 
 
 app.get('/analyze/:zip', async (req, res) => {
@@ -125,6 +125,10 @@ app.get('/analyze/:zip', async (req, res) => {
             return res.status(404).json({ message: "ZIP not found" });
         }
 
+        if (!data.population) {
+            return res.status(400).json({ message: "Population data missing for this ZIP" });
+        }
+
         const analysis = await getOutbreakAnalysis(zip, data.population, data.symptoms);
         res.json({ analysis });
 
@@ -133,6 +137,7 @@ app.get('/analyze/:zip', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
 
 
 app.listen(SERVER_PORT, () => {
