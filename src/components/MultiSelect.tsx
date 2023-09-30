@@ -31,9 +31,6 @@ export default function MultiSelect() {
 
   const handleChange = (event: any, value: any) => setSelectedOptions(value);
 
-  useEffect(() => {
-    console.log(selectedOptions);
-  }, [selectedOptions])
   return (
     <Autocomplete
       sx={{mt: "30px", width: '90%' }}
