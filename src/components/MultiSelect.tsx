@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { TextField, Autocomplete, MenuItem } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 
@@ -26,17 +26,26 @@ const symptoms = [
 ].sort();
 
 export default function MultiSelect() {
+
+  const [selectedOptions, setSelectedOptions] = useState([]);
+
+  const handleChange = (event: any, value: any) => setSelectedOptions(value);
+
+  useEffect(() => {
+    console.log(selectedOptions);
+  }, [selectedOptions])
   return (
     <Autocomplete
-      sx={{mt: 5, width: '90%' }}
+      sx={{mt: "30px", width: '90%' }}
       multiple
       options={symptoms}
       getOptionLabel={(option) => option}
+      onChange={handleChange}
       disableCloseOnSelect
       renderInput={(params) => (
         <TextField
           {...params}
-          variant="outlined"
+          variant="standard"
           label="What Symptoms Are You Experiencing?"
           placeholder="Search For Symptoms"
         />
