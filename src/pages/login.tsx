@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 
 export default function Login() {
+    const router = useRouter();
+
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL
 
     const [loginData, setLoginData] = useState({
         email: "",
@@ -16,6 +20,36 @@ export default function Login() {
             [name]: value
         }));
     }
+
+    const handleLoginSubmit = async (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+    
+        try {
+            const response = await fetch(`${SERVER_URL}/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: loginData.email,
+                    password: loginData.password
+                })
+            });
+    
+            const data = await response.json();
+    
+            if (response.status === 200) {
+                alert(data.message);
+                router.push('/'); 
+            } else {
+                alert(data.message);
+            }
+        } catch (error) {
+            console.error("Error during login:", error);
+            alert("Error during login. Please try again.");
+        }
+    }
+    
 
 
     return (
@@ -38,7 +72,7 @@ export default function Login() {
                     >
                         Welcome Back
                     </motion.h1>
-                    
+                    <form onSubmit={handleLoginSubmit}>
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -85,6 +119,7 @@ export default function Login() {
                             Login
                         </button>
                     </motion.div>
+                    </form>
                 </main>
                 <div className="fixed top-0 right-0 w-[80%] md:w-1/2 h-screen bg-[#01453D]/20" style={{
                     clipPath: "polygon(100px 0,100% 0,calc(100% + 225px) 100%, 480px 100%)",
