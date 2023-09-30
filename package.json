@@ -1,0 +1,32 @@
+{
+  "name": "robinhood",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "leaflet": "^1.9.4",
+    "next": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "react-leaflet": "^4.2.1"
+  },
+  "devDependencies": {
+    "@types/leaflet": "^1.9.6",
+    "@types/next": "^9.0.0",
+    "@types/node": "latest",
+    "@types/react": "^18.2.23",
+    "@types/react-dom": "latest",
+    "@types/react-leaflet": "^3.0.0",
+    "autoprefixer": "latest",
+    "json-loader": "^0.5.7",
+    "postcss": "latest",
+    "raw-loader": "^4.0.2",
+    "tailwindcss": "latest",
+    "typescript": "latest"
+  }
+}
