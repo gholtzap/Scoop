@@ -2,6 +2,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from 'react';
 import fetch from 'isomorphic-unfetch';
 import { useRouter } from 'next/router';
+import Header from '../components/Header';
 
 
 export default function Signup() {
@@ -63,6 +64,7 @@ export default function Signup() {
 
     return (
         <AnimatePresence>
+            <Header />
             <div className="min-h-[100vh] sm:min-h-screen w-screen flex flex-col relative bg-[#2C2C2C] font-inter overflow-hidden">
                 <svg className="fixed z-[1] w-full h-full opacity-[35%]">
                     <rect width="100%" height="100%" filter="url(#noise)"></rect>
