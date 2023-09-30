@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const OpenAI = require('openai').default;
+const utils = require('./utils.js')
 
 
 const app = express();
@@ -33,10 +34,14 @@ db.once('open', function () {
 
 const symptomSchema = new mongoose.Schema({
     zip: String,
-    symptoms: {
-        type: Object,
-        required: true
-    },
+    entries: [ new mongoose.Schema({
+            day: Number,
+            symptoms: {
+                type: Object,
+                required: true
+            }
+        })
+    ],
     population: Number
 });
 
@@ -129,7 +134,9 @@ app.get('/analyze/:zip', async (req, res) => {
             return res.status(400).json({ message: "Population data missing for this ZIP" });
         }
 
-        const analysis = await getOutbreakAnalysis(zip, data.population, data.symptoms);
+        const symptomsData = utils.getSymptomsData(data.entries, 14)
+        console.log(symptomsData)
+        const analysis = await getOutbreakAnalysis(zip, data.population, symptomsData);
         res.json({ analysis });
 
     } catch (error) {
