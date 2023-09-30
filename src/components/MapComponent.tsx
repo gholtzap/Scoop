@@ -121,7 +121,7 @@ function MapComponent() {
     }
 
     return (
-        <MapContainer center={[36.7783, -119.4179]} zoom={6} style={{ width: '100%', height: '900px' }}>
+        <MapContainer center={[36.7783, -119.4179]} zoom={6} style={{ width: '100%', height: '1800px' }}>
             <TileLayer
                 url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
