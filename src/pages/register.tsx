@@ -1,8 +1,14 @@
-import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from 'react';
+import fetch from 'isomorphic-unfetch';
+import { useRouter } from 'next/router';
+
 
 export default function Signup() {
+    const router = useRouter();
+
+
+    const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL
 
     const [formData, setFormData] = useState({
         username: "",
@@ -17,6 +23,42 @@ export default function Signup() {
             ...prevState,
             [name]: value
         }));
+    }
+
+    const handleSubmit = async (e: { preventDefault: () => void; }) => {
+        e.preventDefault();
+
+        if (formData.password !== formData.confirmPassword) {
+            alert("Passwords do not match!");
+            return;
+        }
+
+        try {
+            const response = await fetch(`${SERVER_URL}/register`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    username: formData.username,
+                    email: formData.email,
+                    password: formData.password
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.status === 201) {
+                alert(data.message);
+                router.push('/login');
+            } else {
+                alert(data.message);
+            }
+
+        } catch (error) {
+            console.error("Error during registration:", error);
+            alert("Error during registration. Please try again.");
+        }
     }
 
     return (
@@ -39,7 +81,7 @@ export default function Signup() {
                     >
                         Create your Account
                     </motion.h1>
-                    
+                    <form onSubmit={handleSubmit}>
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -83,7 +125,6 @@ export default function Signup() {
                             className="p-2 rounded bg-[#2C2C2C] text-[#25D0AB] border-[#25D0AB]"
                         />
                     </motion.div>
-
                     <motion.div
                         initial={{ opacity: 0, y: 40 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -102,6 +143,8 @@ export default function Signup() {
                             Sign Up
                         </button>
                     </motion.div>
+                    </form>
+                    
                 </main>
                 <div className="fixed top-0 right-0 w-[80%] md:w-1/2 h-screen bg-[#01453D]/20" style={{
                     clipPath: "polygon(100px 0,100% 0,calc(100% + 225px) 100%, 480px 100%)",
