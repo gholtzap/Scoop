@@ -2,12 +2,8 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const OpenAI = require('openai').default;
-<<<<<<< HEAD
 const utils = require('./utils.js')
-
-=======
 const bcrypt = require('bcrypt');
->>>>>>> b619831aa080d30dbe606ced217a1416241f2f54
 
 const app = express();
 
