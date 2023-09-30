@@ -86,12 +86,19 @@ app.post('/analyze', async (req, res) => {
 });
 
 
-async function getOutbreakAnalysis(zip, symptoms) {
-    const symptomSummary = Object.entries(symptoms)
-                                 .map(([symptom, count]) => `${count} people have ${symptom}`)
-                                 .join(', ');
+async function getOutbreakAnalysis(zip, population, symptoms) {
 
-    const summary = `In my simulation video game, there is an area where ${symptomSummary}. Based on the symptoms of the population in my video game, what real life disease do you think would be prevalent in my video game simulation?`;
+    const symptomSummary = Object.entries(symptoms)
+                             .map(([symptom, count]) => `${count} out of ${population} people have ${symptom}`)
+                             .join(', ');
+
+const summary = `In my simulation video game, there is an area with a population of ${population} where ${symptomSummary}. 
+Based on these symptoms, what real-life disease might be prevalent in my video game simulation? 
+Note that there can be no significant disease prevalent. You are allowed to return 'None'. If the number of symptoms is not significant
+enough compared to the population, you should return 'None'.
+Return me ONLY the disease which you believe is most applicable given these symptoms, in this format, for example:
+The result is Common Cold.`;
+
 
     const conversation = [
         { role: "system", content: "You are a helpful assistant." },
@@ -112,13 +119,13 @@ async function getOutbreakAnalysis(zip, symptoms) {
 app.get('/analyze/:zip', async (req, res) => {
     try {
         const zip = req.params.zip;
-        const symptoms = await Symptom.findOne({ zip: zip });
+        const data = await Symptom.findOne({ zip: zip });
 
-        if (!symptoms) {
+        if (!data) {
             return res.status(404).json({ message: "ZIP not found" });
         }
 
-        const analysis = await getOutbreakAnalysis(zip, symptoms.symptoms);
+        const analysis = await getOutbreakAnalysis(zip, data.population, data.symptoms);
         res.json({ analysis });
 
     } catch (error) {
@@ -126,6 +133,7 @@ app.get('/analyze/:zip', async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 });
+
 
 app.listen(SERVER_PORT, () => {
     console.log(`Server started on ${SERVER_URL}/${SERVER_PORT}`);

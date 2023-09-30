@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { MapContainer, TileLayer, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
@@ -58,10 +58,10 @@ async function fetchOutbreakAnalysis(zip: string) {
     }
 }
 
-
 function MapComponent() {
     const [geojsonData, setGeojsonData] = useState(null);
     const [selectedZipData, setSelectedZipData] = useState<SymptomData | null>(null);
+    const [selectedAnalysis, setSelectedAnalysis] = useState<string | null>(null);
 
     useEffect(() => {
         fetch('/California_Zip_Codes.geojson')
@@ -72,42 +72,66 @@ function MapComponent() {
 
     function GeoJSONLayer() {
         const map = useMap();
-
+        const geoJsonLayerRef = useRef<L.GeoJSON | null>(null);
+    
         useEffect(() => {
             if (geojsonData) {
-                const geoJsonLayer = L.geoJSON(geojsonData, {
-                    onEachFeature: (feature, layer) => {
-                        layer.on('click', async (e) => {
-                            const zipCode = feature.properties.ZIP_CODE;
-                            const data = await fetchSymptomsByZip(zipCode);
-                            const analysis = await fetchOutbreakAnalysis(zipCode);
-                            setSelectedZipData(data);
-                        
-                            const popupContent = data
-                                ? `ZIP Code: ${zipCode} - Symptoms: ${JSON.stringify(data.symptoms)} - Analysis: ${analysis}`
-                                : `ZIP Code: ${zipCode}`;
-                            layer.bindPopup(popupContent).openPopup();
-                        });
-                        
-                    }
-                }).addTo(map);
-
-                return () => {
-                    map.removeLayer(geoJsonLayer);
-                };
+                if (!geoJsonLayerRef.current) {
+                    geoJsonLayerRef.current = L.geoJSON(geojsonData, {
+                        onEachFeature: (feature, layer) => {
+                            layer.on('click', async (e) => {
+                                map.dragging.disable();
+                                map.doubleClickZoom.disable();
+                                map.scrollWheelZoom.disable();
+    
+                                const zipCode = feature.properties.ZIP_CODE;
+                                const data = await fetchSymptomsByZip(zipCode);
+                                const analysis = await fetchOutbreakAnalysis(zipCode);
+                                setSelectedZipData(data);
+                                setSelectedAnalysis(analysis);
+    
+                                const popupContent = data
+                                    ? `ZIP Code: ${zipCode} - Symptoms: ${JSON.stringify(data.symptoms)} - Analysis: ${analysis}`
+                                    : `ZIP Code: ${zipCode}`;
+    
+                                map.dragging.enable();
+                                map.doubleClickZoom.enable();
+                                map.scrollWheelZoom.enable();
+    
+                                layer.bindPopup(popupContent).openPopup();
+                            });
+                        }
+                    }).addTo(map);
+                }
             }
+    
+            return () => {
+                if (geoJsonLayerRef.current) {
+                    map.removeLayer(geoJsonLayerRef.current);
+                }
+            };
         }, [map, geojsonData]);
 
-        return selectedZipData && selectedZipData.symptoms ? (
-            <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-80 p-4 rounded-lg text-sm z-10 space-y-2">
-                {Object.entries(selectedZipData.symptoms).map(([symptom, count]) => (
-                    <div key={symptom}>
-                        {symptom}: {count}
+        return (
+            <>
+                {selectedZipData && selectedZipData.symptoms && (
+                    <div className="absolute top-4 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-80 p-4 rounded-lg text-sm z-10 space-y-2">
+                        <h3 className="text-xl mb-2">Symptoms</h3>
+                        {Object.entries(selectedZipData.symptoms).map(([symptom, count]) => (
+                            <div key={symptom}>
+                                {symptom}: {count}
+                            </div>
+                        ))}
                     </div>
-                ))}
-            </div>
-        ) : null;
-
+                )}
+                {selectedAnalysis && (
+                    <div className="absolute top-4 right-1/4 bg-white bg-opacity-80 p-4 rounded-lg text-sm z-10 space-y-2">
+                        <h3 className="text-xl mb-2">Analysis</h3>
+                        <p>{selectedAnalysis}</p>
+                    </div>
+                )}
+            </>
+        );
     }
 
     return (
