@@ -32,6 +32,33 @@ async function fetchSymptomsByZip(zip: string) {
     }
 }
 
+async function fetchSymptomAnalysis(summary: string) {
+    try {
+        const response = await fetch(`${SERVER_URL}/analyze`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ summary })
+        });
+        const data = await response.json();
+        return data.insight;
+    } catch (error) {
+        console.error("Error fetching analysis:", error);
+    }
+}
+
+async function fetchOutbreakAnalysis(zip: string) {
+    try {
+        const response = await fetch(`${SERVER_URL}/analyze/${zip}`);
+        const data = await response.json();
+        return data.analysis;
+    } catch (error) {
+        console.error("Error fetching analysis:", error);
+    }
+}
+
+
 function MapComponent() {
     const [geojsonData, setGeojsonData] = useState(null);
     const [selectedZipData, setSelectedZipData] = useState<SymptomData | null>(null);
@@ -53,13 +80,15 @@ function MapComponent() {
                         layer.on('click', async (e) => {
                             const zipCode = feature.properties.ZIP_CODE;
                             const data = await fetchSymptomsByZip(zipCode);
+                            const analysis = await fetchOutbreakAnalysis(zipCode);
                             setSelectedZipData(data);
-
+                        
                             const popupContent = data
-                                ? `ZIP Code: ${zipCode} - Symptoms: ${JSON.stringify(data.symptoms)}`
+                                ? `ZIP Code: ${zipCode} - Symptoms: ${JSON.stringify(data.symptoms)} - Analysis: ${analysis}`
                                 : `ZIP Code: ${zipCode}`;
                             layer.bindPopup(popupContent).openPopup();
                         });
+                        
                     }
                 }).addTo(map);
 
