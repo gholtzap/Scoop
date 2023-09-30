@@ -1,12 +1,19 @@
-"use client";
 
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+import React, { useState, useEffect } from 'react';
+
+import combined from './health_icons/combined.svg';
+
 
 export default function Home() {
 
+    
+
     return (
         <AnimatePresence>
+           
+
             <div className="min-h-[100vh] sm:min-h-screen w-screen flex flex-col relative bg-[#2C2C2C] font-inter overflow-hidden">
                 <svg
                     style={{ filter: "contrast(125%) brightness(110%)" }}
@@ -176,25 +183,25 @@ export default function Home() {
                     }}
                 ></div>
 
-                <motion.canvas
-                    initial={{
-                        filter: "blur(20px)",
-                    }}
-                    animate={{
-                        filter: "blur(0px)",
-                    }}
-                    transition={{
-                        duration: 1,
-                        ease: [0.075, 0.82, 0.965, 1],
-                    }}
-                    style={{
-                        clipPath:
-                            "polygon(100px 0,100% 0,calc(100% + 225px) 100%, 480px 100%)",
-                    }}
-                    id="gradient-canvas"
-                    data-transition-in
-                    className="z-50 fixed top-0 right-[-2px] w-[80%] md:w-1/2 h-screen bg-[#01453D]"
-                ></motion.canvas>
+<motion.canvas
+        initial={{
+            filter: "blur(20px)",
+        }}
+        animate={{
+            filter: "blur(0px)",
+        }}
+        transition={{
+            duration: 1,
+            ease: [0.075, 0.82, 0.965, 1],
+        }}
+        style={{
+            clipPath: "polygon(100px 0,100% 0,calc(100% + 225px) 100%, 480px 100%)",
+            
+        }}
+        id="gradient-canvas"
+        data-transition-in
+        className="z-50 fixed top-0 right-[-2px] w-[80%] md:w-1/2 h-screen bg-[#01453D]"
+    ></motion.canvas>
                 <div className="h-[60px] bg-[#006D5B] fixed bottom-0 z-20 w-3/4 flex flex-row items-center justify-evenly">
                     <p className="text-white/80 text-base md:text-lg font-semibold md:leading-[60px] whitespace-nowrap flex flex-row">
                         Developed by

@@ -2,8 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const OpenAI = require('openai').default;
+<<<<<<< HEAD
 const utils = require('./utils.js')
 
+=======
+const bcrypt = require('bcrypt');
+>>>>>>> b619831aa080d30dbe606ced217a1416241f2f54
 
 const app = express();
 
@@ -146,7 +150,75 @@ app.get('/analyze/:zip', async (req, res) => {
 });
 
 
-
-app.listen(SERVER_PORT, () => {
-    console.log(`Server started on ${SERVER_URL}/${SERVER_PORT}`);
+const userSchema = new mongoose.Schema({
+    username: String,
+    email: {
+        type: String,
+        unique: true,
+        required: true
+    },
+    password: {
+        type: String,
+        required: true
+    }
 });
+
+const User = mongoose.model('User', userSchema, 'users');
+
+// Registration endpoint
+app.post('/register', async (req, res) => {
+    try {
+        const { username, email, password } = req.body;
+
+        const existingUser = await User.findOne({ email });
+        if(existingUser) {
+            return res.status(400).json({ message: "User with this email already exists!" });
+        }
+
+        const saltRounds = 10;
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+        const newUser = new User({
+            username,
+            email,
+            password: hashedPassword
+        });
+
+        await newUser.save();
+        res.status(201).json({ message: "User registered successfully!" });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
+// Login endpoint
+
+app.post('/login', async (req, res) => {
+    try {
+        const { email, password } = req.body;
+
+        const user = await User.findOne({ email });
+        if (!user) {
+            return res.status(400).json({ message: "User not found!" });
+        }
+
+        const match = await bcrypt.compare(password, user.password);
+        if (match) {
+            res.json({ message: "Login successful!" });
+        } else {
+            res.status(401).json({ message: "Invalid password!" });
+        }
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+
+
+const PORT = process.env.SERVER_PORT || 5000;
+app.listen(PORT, () => {
+    console.log(`Server started on port ${PORT}`);
+});
+
