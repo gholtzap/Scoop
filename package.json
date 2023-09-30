@@ -9,7 +9,11 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
     "leaflet": "^1.9.4",
+    "mongoose": "^7.5.3",
     "next": "latest",
     "react": "latest",
     "react-dom": "latest",
@@ -28,5 +32,18 @@
     "raw-loader": "^4.0.2",
     "tailwindcss": "latest",
     "typescript": "latest"
-  }
+  },
+  "description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
+  "main": "next.config.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gholtzap/robinhood-test.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gholtzap/robinhood-test/issues"
+  },
+  "homepage": "https://github.com/gholtzap/robinhood-test#readme"
 }
