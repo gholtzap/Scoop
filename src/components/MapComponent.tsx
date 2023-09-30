@@ -26,14 +26,29 @@ function MapComponent() {
 
     function GeoJSONLayer() {
         const map = useMap();
+        const [selectedZipCode, setSelectedZipCode] = useState<string | null>(null);
       
         useEffect(() => {
           if (geojsonData) {
-            L.geoJSON(geojsonData).addTo(map);
+            const geoJsonLayer = L.geoJSON(geojsonData, {
+              onEachFeature: (feature, layer) => {
+                layer.on('click', (e) => {
+                  const zipCode = feature.properties.ZIP_CODE;
+                  setSelectedZipCode(zipCode);
+      
+                  const popupContent = `ZIP Code: ${zipCode}`;
+                  layer.bindPopup(popupContent).openPopup();
+                });
+              }
+            }).addTo(map);
+            
+            return () => {
+              map.removeLayer(geoJsonLayer);
+            };
           }
         }, [map, geojsonData]);
       
-        return null;
+        return selectedZipCode ? <div className="zipcode-display">{selectedZipCode}</div> : null;
       }
 
 
@@ -44,7 +59,6 @@ function MapComponent() {
   
   const cities: City[] = [
     { name: "New York", coordinates: [40.730610, -73.935242] },
-    // Add other cities as needed...
   ];
 
   return (
@@ -53,7 +67,6 @@ function MapComponent() {
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
       {geojsonData && <GeoJSONLayer />}
-      {/* ... other components, if needed ... */}
     </MapContainer>
   );
 }

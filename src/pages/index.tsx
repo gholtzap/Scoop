@@ -1,4 +1,3 @@
-// src/pages/index.tsx
 import Head from 'next/head';
 import dynamic from 'next/dynamic';
 
