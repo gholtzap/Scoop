@@ -7,25 +7,14 @@ const bcrypt = require("bcrypt");
 const fs = require("fs");
 const csv = require("csv-parser");
 
-// FOR LOCAL HOSTING ONLY
-// const app = express();
-//
-
 const server = express();
-module.exports = server;
-
 
 require("dotenv").config();
 
 const MONGODB_URI = process.env.MONGODB_URI;
-const SERVER_URL = process.env.SERVER_URL;
-// const SERVER_PORT = process.env.SERVER_PORT;
-
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
-const openai = new OpenAI(OPENAI_API_KEY);
 
 mongoose.set("debug", true);
-
 mongoose.connect(MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -37,7 +26,6 @@ db.once("open", function () {
   console.log("Connected to MongoDB");
   console.log("Connected to Database:", db.name);
 });
-
 const symptomSchema = new mongoose.Schema({
   zip: String,
   entries: [
@@ -77,10 +65,10 @@ const symptoms = [
   "chestPain",
 ];
 
-app.use(cors());
-app.use(express.json());
+server.use(cors());
+server.use(express.json());
 
-app.get("/symptoms/:zip", async (req, res) => {
+server.get("/symptoms/:zip", async (req, res) => {
   try {
     console.log("Database Connection State:", db.readyState);
 
@@ -101,7 +89,7 @@ app.get("/symptoms/:zip", async (req, res) => {
   }
 });
 
-app.post("/analyze", async (req, res) => {
+server.post("/analyze", async (req, res) => {
   const { summary } = req.body;
 
   try {
@@ -224,7 +212,7 @@ function getDataByZipcode(zip) {
   return new Promise((resolve, reject) => {
     let matchedRow = null;
     let headers = null;
-    fs.createReadStream("California_Zip_Codes.csv")
+    fs.createReadStream("public/California_Zip_Codes.csv")
       .pipe(csv())
       .on("data", (row) => {
         if (!headers) {
@@ -402,4 +390,4 @@ app.listen(PORT, () => {
 });
 */
 
-module.exports = app;
+module.exports = server;
