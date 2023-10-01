@@ -11,6 +11,8 @@ import { Box } from "@mui/material";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import { useState } from "react";
 
+const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL
+
 const manualMapping: any = {
   Fever: "fever",
   Fatigue: "fatigue",
@@ -53,7 +55,7 @@ export default function InputForm() {
     },
   });
 
-  const handleButtonClick = () => {
+  const handleButtonClick = async () => {
     // Check zipCode is 5 digits
     if (zipCode.length !== 5 || !Number(zipCode)) {
       alert("Please enter a valid zip code");
@@ -71,6 +73,27 @@ export default function InputForm() {
     for (const option of selectedOptions) {
       const value = manualMapping[option];
       body[value] = 1;
+    }
+
+    try {
+      const response = await fetch(`${SERVER_URL}/postSymptoms`, {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+      });
+
+      const data = await response.json();
+
+      if (response.status === 200) {
+          alert(data.message);
+      } else {
+          alert(data.message);
+      }
+    } catch (error) {
+        console.error("Error during posting:", error);
+        alert("Error during posting. Please try again");
     }
 
     console.log(body);
