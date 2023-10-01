@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+// import "./styles.css";
 
 const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
@@ -50,21 +51,22 @@ async function fetchOutbreakAnalysis(zip: string) {
 
 function MapComponent() {
   const [geojsonData, setGeojsonData] = useState(null);
-  const [selectedZipData, setSelectedZipData] = useState<SymptomData | null>(
-    null
-  );
-  const [selectedAnalysis, setSelectedAnalysis] = useState<string | null>(null);
-
+  
   useEffect(() => {
     fetch("/California_Zip_Codes.geojson")
-      .then((response) => response.json())
-      .then((data) => setGeojsonData(data))
-      .catch((error) => console.error("Error fetching GeoJSON data:", error));
+    .then((response) => response.json())
+    .then((data) => setGeojsonData(data))
+    .catch((error) => console.error("Error fetching GeoJSON data:", error));
   }, []);
-
+  
   function GeoJSONLayer() {
     const map = useMap();
-
+    const [selectedZipData, setSelectedZipData] = useState<SymptomData | null>(
+      null
+    );
+    const [selectedAnalysis, setSelectedAnalysis] = useState<string | null>(null);
+    
+    
     useEffect(() => {
       if (geojsonData) {
         L.geoJSON(geojsonData, {
