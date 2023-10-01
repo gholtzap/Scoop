@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { TextField, Autocomplete, MenuItem } from "@mui/material";
+import { TextField, Autocomplete, MenuItem, Chip } from "@mui/material";
 import CheckIcon from "@mui/icons-material/Check";
 
 const symptoms = [
@@ -25,20 +25,35 @@ const symptoms = [
     'Chest Pain'
 ].sort();
 
-export default function MultiSelect() {
+interface MultiSelectProps {
+  setSelectedOptions: any
+  selectedOptions: any
+}
 
-  const [selectedOptions, setSelectedOptions] = useState([]);
+export default function MultiSelect({ selectedOptions, setSelectedOptions }: MultiSelectProps) {
+
 
   const handleChange = (event: any, value: any) => setSelectedOptions(value);
 
   return (
     <Autocomplete
       sx={{mt: "30px", width: '90%' }}
+      value={selectedOptions}
       multiple
       options={symptoms}
       getOptionLabel={(option) => option}
       onChange={handleChange}
       disableCloseOnSelect
+      renderTags={(value: string[], getTagProps) =>
+        value.map((option: string, index: number) => (
+          <Chip
+            variant="outlined"
+            label={option}
+            {...getTagProps({ index })}
+            key={index}
+          />
+        ))
+      }
       renderInput={(params) => (
         <TextField
           {...params}
@@ -55,7 +70,7 @@ export default function MultiSelect() {
           sx={{ justifyContent: "space-between" }}
         >
           {option}
-          {selected ? <CheckIcon color="info" /> : null}
+          {selected ? <CheckIcon color="info" key={option}/> : null}
         </MenuItem>
       )}
     />
