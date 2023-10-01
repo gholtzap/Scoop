@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const MONGODB_URI = process.env.MONGODB_URI
 const SERVER_URL = process.env.SERVER_URL;
-const SERVER_PORT = process.env.SERVER_PORT;
+// const SERVER_PORT = process.env.SERVER_PORT;
 
 const csvFilePath = './California_Zip_Codes.csv';
 

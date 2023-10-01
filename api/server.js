@@ -6,13 +6,19 @@ const utils = require("./utils.js");
 const bcrypt = require("bcrypt");
 const fs = require("fs");
 const csv = require("csv-parser");
-const app = express();
+
+// FOR LOCAL HOSTING ONLY
+// const app = express();
+
+const server = express();
+module.exports = server;
+
 
 require("dotenv").config();
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const SERVER_URL = process.env.SERVER_URL;
-const SERVER_PORT = process.env.SERVER_PORT;
+// const SERVER_PORT = process.env.SERVER_PORT;
 
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
 const openai = new OpenAI(OPENAI_API_KEY);
@@ -387,7 +393,12 @@ app.post("/login", async (req, res) => {
   }
 });
 
+/* FOR LOCAL HOSTING ONLY
+
 const PORT = process.env.SERVER_PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server started on port ${PORT}`);
 });
+*/
+
+module.exports = app;
