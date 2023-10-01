@@ -45,11 +45,11 @@ const reversedMapping: any = {
   "lossOfAppetite": "Loss Of Appetite",
   "sweating": "Sweating",
   "jointPain": "Joint Pain",
-  "swollenLymphNodes": "Swollen Lymph Nodes",
+  "swollenLymphNodes": "Swollen Lymph",
   "rash": "Rash",
   "abdominalPain": "Abdominal Pain",
   "dizziness": "Dizziness",
-  "lossOfTasteOrSmell": "Loss Of Taste Or Smell",
+  "lossOfTasteOrSmell": "Loss Of Taste/Smell",
   "chestPain": "Chest Pain"
 };
 
