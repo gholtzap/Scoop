@@ -55,7 +55,6 @@ const reversedMapping: any = {
 
 
 const SymptomCard: React.FC<SymptomCardProps> = ({ data, analysis }) => {
-  const [isExpanded, setIsExpanded] = React.useState(false);
 
   return (
     <div className="grid grid-cols-1 gap-x-6 w-full justify-center h-[700px]">
@@ -109,15 +108,6 @@ const SymptomCard: React.FC<SymptomCardProps> = ({ data, analysis }) => {
                   );
                 })}
           </div>
-
-          {/* {data?.symptoms && Object.entries(data.symptoms).length > 5 && (
-            <button
-              onClick={() => setIsExpanded(!isExpanded)}
-              className="text-[#95F3D9] mt-2"
-            >
-              {isExpanded ? "Show Less" : "Show All"}
-            </button>
-          )} */}
         </div>
       </div>
     </div>
