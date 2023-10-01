@@ -19,6 +19,13 @@ mongoose.connect(MONGODB_URI, {
     useUnifiedTopology: true
 });
 
+const symptoms = [
+    'fever', 'fatigue', 'cough', 'shortnessOfBreath', 'soreThroat', 'runnyNose', 
+    'bodyAches', 'headache', 'chills', 'nausea', 'diarrhea', 'lossOfAppetite', 'sweating',
+    'jointPain', 'swollenLymphNodes', 'rash', 'abdominalPain', 'dizziness', 'lossOfTasteOrSmell',
+    'chestPain'
+]
+
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
@@ -27,11 +34,15 @@ db.once('open', function () {
 
     const symptomSchema = new mongoose.Schema({
         zip: String,
-        population: Number,
-        symptoms: {
-            type: Object,
-            required: true
-        }
+        entries: [ new mongoose.Schema({
+                day: Number,
+                symptoms: {
+                    type: Object,
+                    required: true
+                }
+            })
+        ],
+        population: Number
     });
 
 
@@ -47,13 +58,13 @@ db.once('open', function () {
             for (const row of results) {
                 const zip = row.ZIP_CODE;
                 const population = Number(row.POPULATION);
-                const symptoms = generateRandomSymptoms(population);
+                const entries = generateRandomEntries(population);
                 try {
                     await Symptom.findOneAndUpdate(
                         { zip: zip },
                         {
                             population: population,
-                            symptoms: symptoms
+                            entries: entries
                         },
                         { upsert: true }
                     );
@@ -81,35 +92,44 @@ function getScaledExponential(lambda, population) {
     return scaledValue;
 }
 
-
-function generateRandomSymptoms(population) {
-
-    const lambda = 5;
-
-    return {
-        fever: getScaledExponential(lambda, population),
-        fatigue: getScaledExponential(lambda, population),
-        cough: getScaledExponential(lambda, population),
-        shortnessOfBreath: getScaledExponential(lambda, population),
-        soreThroat: getScaledExponential(lambda, population),
-        runnyNose: getScaledExponential(lambda, population),
-        bodyAches: getScaledExponential(lambda, population),
-        headache: getScaledExponential(lambda, population),
-        chills: getScaledExponential(lambda, population),
-        nausea: getScaledExponential(lambda, population),
-        diarrhea: getScaledExponential(lambda, population),
-        lossOfAppetite: getScaledExponential(lambda, population),
-        sweating: getScaledExponential(lambda, population),
-        jointPain: getScaledExponential(lambda, population),
-        swollenLymphNodes: getScaledExponential(lambda, population),
-        rash: getScaledExponential(lambda, population),
-        abdominalPain: getScaledExponential(lambda, population),
-        dizziness: getScaledExponential(lambda, population),
-        lossOfTasteOrSmell: getScaledExponential(lambda, population),
-        chestPain: getScaledExponential(lambda, population),
-    };
+function generateRandomSymptoms(population, lambda){
+    const randomSymptoms = {}
+    symptoms.forEach((item, index) => {
+        randomSymptoms[item] = getScaledExponential(lambda, population)
+    })
+    return randomSymptoms
 }
 
 
+function generateRandomEntries(population) {
+    if (population < 0){ population = 0 }
 
+    const lambda = 500;
 
+    const numEntries = 25 //number of days we are filling
+    const currentDate = new Date();
+    const currentTime = currentDate.getTime();
+    const day = Math.floor(currentTime / (1000 * 60 * 60 * 24))
+
+    console.log(day)
+
+    entries = []
+    const symptomsSum = {};
+    symptoms.forEach((item, index) => {
+        symptomsSum[item] = 0;
+    })
+    for (let i = numEntries; i >= 0; i--){
+        let curDay = day - i;
+        let newSymptoms = generateRandomSymptoms(population, lambda);
+        symptoms.forEach((item, index) => {
+            symptomsSum[item] += newSymptoms[item];
+        })
+        let copy = Object.assign({}, symptomsSum);
+        entries.push({
+            day: curDay,
+            symptoms: copy
+        })
+    }
+    return entries;
+
+}
