@@ -37,7 +37,7 @@ const manualMapping: any = {
 };
 
 export default function InputForm() {
-  const [expanded, setExpanded] = useState<boolean>(false);
+  const [expanded, setExpanded] = useState<boolean>(true);
   const [selectedOptions, setSelectedOptions] = useState([]);
   const [zipCode, setZipCode] = useState("");
 
@@ -108,7 +108,7 @@ export default function InputForm() {
         <Accordion
           expanded={expanded}
           onChange={() => setExpanded(!expanded)}
-          sx={{ width: "300px" }}
+          sx={{ width: "700px" }}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
