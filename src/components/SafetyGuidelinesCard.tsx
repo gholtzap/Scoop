@@ -35,7 +35,11 @@ interface HealthData {
     partiallyVaccinated: number;
     notVaccinated: number;
   };
-  comorbidities: [string];
+  comorbidities: {
+    diabetes: number;
+    hypertension: number;
+    respiratoryConditions: number;
+  };
 }
 
 const MIN_BAR_WIDTH = 5;
@@ -84,7 +88,7 @@ const InfoCard: React.FC<SymptomCardProps> = ({ data, analysis }) => {
     vaccinationStatus,
     comorbidities,
   } = jsonData;
-
+  console.log(analysis);
   return (
     <div className="grid grid-cols-1 gap-x-6 w-full justify-center">
       <div className="p-6 bg-[#2C2C2C] shadow-lg rounded-lg space-y-4 w-full border-2 border-[#25D0AB]">
@@ -92,75 +96,20 @@ const InfoCard: React.FC<SymptomCardProps> = ({ data, analysis }) => {
           <h3 className="text-2xl font-semibold text-[#25D0AB]">
             <div>
               <Flex direction="column">
-                <Heading size="1">ZipCode</Heading>
-                <Heading size="8">{data?.zip}</Heading>
+                <Heading size="6">Health and Safety Guidelines</Heading>
               </Flex>
             </div>
           </h3>
-          <div>
-            {possibleDiseases.map((disease) => (
-              <Card>
-                <div
-                  className="flex align-center justify-between"
-                  key={disease}
-                >
-                  <span>{disease}</span>
-                  <div className="flex align-center justify-center gap-1">
-                    {amountInfected[disease]}
-                    <PersonIcon />
-                  </div>
-                </div>
-              </Card>
-            ))}
-          </div>
         </div>
-        <div className="border-t border-[#25D0AB] pt-4">
-          <h4 className="text-lg font-semibold text-[#25D0AB] mb-2">
-            Population
-          </h4>
-          <p className="text-[#95F3D9]">{data?.population}</p>
-        </div>
-
-        <div className="border-t border-[#25D0AB] pt-4">
-          <h4 className="text-lg font-semibold text-[#25D0AB] mb-2">
-            % of Population Reported
-          </h4>
-          <p className="text-[#95F3D9]">{percentageReported}%</p>
-        </div>
-        <div className="border-t border-[#25D0AB] pt-4">
-          <h4 className="text-lg font-semibold text-[#25D0AB] mb-2">
-            Age Distribution
-          </h4>
-          <div className="flex gap-7">
-            <div>
-              <p className="text-[#95F3D9]">0-18: {ageDistribution["0-18"]}</p>
-              <p className="text-[#95F3D9]">
-                19-35: {ageDistribution["19-35"]}
-              </p>
-            </div>
-            <div>
-              <p className="text-[#95F3D9]">
-                36-60: {ageDistribution["36-60"]}
-              </p>
-              <p className="text-[#95F3D9]">61+: {ageDistribution["61+"]}</p>
-            </div>
-          </div>
-        </div>
-        {comorbidities.length > 0 && (
+        {Object.keys(safetyGuidelines).map((guideline) => (
           <div className="border-t border-[#25D0AB] pt-4">
             <h4 className="text-lg font-semibold text-[#25D0AB] mb-2">
-              Possible Comorbidities
+              {guideline}
             </h4>
-            {comorbidities.map((morbidity) => (
-              <Card key={morbidity}>{morbidity}</Card>
-            ))}
+            <p className="text-[#95F3D9]">{safetyGuidelines[guideline]}</p>
           </div>
-        )}
+        ))}
       </div>
-      {/* <div className="p-6 bg-[#2C2C2C] shadow-lg rounded-lg space-y-4 max-w-md border-2 border-[#25D0AB]">
-                <h4 className="text-lg font-semibold text-[#25D0AB] mb-2">Analysis</h4>
-                <p className="text-[#95F3D9]">{analysis}</p>
-            </div> */}
     </div>
   );
 };
