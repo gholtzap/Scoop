@@ -47,6 +47,13 @@ const symptomSchema = new mongoose.Schema({
 
 const Symptom = mongoose.model("Symptom", symptomSchema, "zips");
 
+const symptoms = [
+    'fever', 'fatigue', 'cough', 'shortnessOfBreath', 'soreThroat', 'runnyNose', 
+    'bodyAches', 'headache', 'chills', 'nausea', 'diarrhea', 'lossOfAppetite', 'sweating',
+    'jointPain', 'swollenLymphNodes', 'rash', 'abdominalPain', 'dizziness', 'lossOfTasteOrSmell',
+    'chestPain'
+]
+
 app.use(cors());
 app.use(express.json());
 
@@ -210,6 +217,56 @@ app.get("/analyze/:zip", async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+app.post("/postSymptoms", async (req, res) => {
+    const data = req.body
+    let zipcode = data['zipCode']
+
+    const query = await Symptom.findOne({ zip: zipcode });
+
+    if (query == null){
+        return res.status(500).json({ message: 'invalid zip code' });
+    }
+
+    const currentDate = new Date();
+    const currentTime = currentDate.getTime();
+    const day = Math.floor(currentTime / (1000 * 60 * 60 * 24))
+
+    let entries = query['entries']
+    console.log(entries)
+    if (entries[entries.length - 1]['day'] == day){
+        symptoms.forEach((item, index) => {
+            entries[entries.length - 1]['symptoms'][item] += data[item];
+        })
+    } else {
+        let newSymptoms = {}
+        symptoms.forEach((item, index) => {
+            newSymptoms[item] = data[item];
+        })
+        entries.push({
+            'day': day,
+            'symptoms': newSymptoms
+        })
+    }
+
+    console.log(entries)
+
+    try {
+        await Symptom.findOneAndUpdate(
+            { zip: zipcode },
+            {
+                entries: entries
+            },
+            { upsert: true }
+        );
+        console.log(`Processed ZIP: ${zipcode}`);
+        return res.status(200).json({ message: 'success' });
+    } catch (error) {
+        console.error(`Error processing ZIP: ${zipcode}`, error);
+        return res.status(500).json({ message: 'failed upload' });
+    }
+
+})
 
 const userSchema = new mongoose.Schema({
   username: String,

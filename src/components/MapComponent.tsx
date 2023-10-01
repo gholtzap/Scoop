@@ -3,6 +3,7 @@ import { MapContainer, TileLayer, useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import InfoCard from '../components/InfoCard';
+// import "./styles.css";
 
 const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL;
 
