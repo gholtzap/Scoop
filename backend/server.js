@@ -136,7 +136,7 @@ async function getOutbreakAnalysis(
   {
   "possibleDiseases": ["common cold": {severitylevel}, "influenza":{severitylevel}] // each disease in possibleDiseases should have a low, mild, moderate, severe, critical based on the given information 
 and if there are no potential diseases use ["none"]
-  "safetyGuidelines":["{3 sentence safety guideline for disease such as common cold"},"{same for rest of possibleDiseases}"]
+  "safetyGuidelines":["{possibleDisease":"{make it a paragraph(4-5 sentences) safety guideline for each disease such as common cold"}"]
   "percentageReported": {population / ${symptomsCount}}
   // also create fields for possible amount infected with listed possible Diseases. MAKE SURE each possibleDiseases exists as a key in this field
   // also create a field that describes population density
@@ -146,55 +146,58 @@ and if there are no potential diseases use ["none"]
   // and create an age distribution, vaccination Status, and comorbidities fields in this exact format
   heres an example JSON. make sure to follow this EXACT FORMAT. every string in possibleDisease needs to correspond to each key in the amountInfected field
   {
-    "possibleDiseases": ["common cold", "influenza"],
-    "safetyGuidelines": [
-      "Wash your hands frequently and avoid touching your face.",
-      "Cover your mouth and nose with a tissue or your elbow when coughing or sneezing.",
-      "Stay home if you are feeling sick and seek medical attention if necessary."
-    ],
-    "amountInfected"["common cold": 14, "influenza": 53],
-    "percentageReported": 0.116,
-    "common cold": 1014,
-    "influenza": 966,
-    "headache": 1298,
-    "fever": 1604,
-    "fatigue": 1824,
-    "cough": 1449,
-    "shortnessOfBreath": 1754,
-    "soreThroat": 966,
-    "runnyNose": 1014,
-    "bodyAches": 1261,
-    "chills": 1241,
-    "nausea": 1395,
-    "diarrhea": 1607,
-    "lossOfAppetite": 1405,
-    "sweating": 1482,
-    "jointPain": 1282,
-    "swollenLymphNodes": 1325,
-    "rash": 1463,
-    "abdominalPain": 1420,
-    "dizziness": 1326,
-    "lossOfTasteOrSmell": 2367,
-    "chestPain": 1396,
-    "zipCode": "91344",
-    "population": 52450,
+    "possibleDiseases": ["common cold", "influenza", "COVID-19"],
+    "safetyGuidelines": {
+      "common cold": "To prevent the spread of the common cold, it is important to wash your hands frequently, especially before touching your face. Avoid close contact with people who are sick and cover your mouth and nose when coughing or sneezing, preferably with a tissue or your elbow.",
+      "influenza": "To prevent the spread of influenza, it is important to cover your mouth and nose with a tissue or your elbow when coughing or sneezing. Wash your hands frequently and avoid touching your face. It is also recommended to get vaccinated against the flu.",
+      "COVID-19": "To prevent the spread of COVID-19, it is important to follow guidelines provided by health authorities. This includes wearing masks in public places, practicing social distancing, washing hands frequently, and avoiding large gatherings. It is also recommended to get vaccinated."
+    },
+    "amountInfected": {
+      "common cold": 494,
+      "influenza": 534,
+      "COVID-19": 0
+    },
+    "percentageReported": 1.236,
+    "headache": 577,
+    "fever": 576,
+    "fatigue": 1013,
+    "cough": 344,
+    "shortnessOfBreath": 520,
+    "soreThroat": 534,
+    "runnyNose": 494,
+    "bodyAches": 487,
+    "chills": 715,
+    "nausea": 482,
+    "diarrhea": 436,
+    "lossOfAppetite": 785,
+    "sweating": 369,
+    "jointPain": 565,
+    "swollenLymphNodes": 523,
+    "rash": 581,
+    "abdominalPain": 222,
+    "dizziness": 553,
+    "lossOfTasteOrSmell": 566,
+    "chestPain": 1000,
+    "zipCode": "93630",
+    "population": 21034,
     "ageDistribution": {
-      "0-18": 5487,
-      "19-35": 9765,
-      "36-60": 16542,
-      "61+": 2894
+      "0-18": 4799,
+      "19-35": 6104,
+      "36-60": 7454,
+      "61+": 2677
     },
     "vaccinationStatus": {
-      "fullyVaccinated": 16234,
-      "partiallyVaccinated": 12456,
-      "notVaccinated": 10032
+      "fullyVaccinated": 5000,
+      "partiallyVaccinated": 7000,
+      "notVaccinated": 9000
     },
-    "comorbidities": {
-      "diabetes": 2654,
-      "hypertension": 4762,
-      "respiratoryConditions": 2375
-    }
+    "comorbidities": [
+      "Diabetes",
+      "Hypertension",
+      "Respiratory Conditions"
+    ]
   }
+  MAKE SURE TO MAKE EACH SAFETY GUIDELINE 4-5 SENTENCES EACH
   `;
   //console.log("prompt", summary);
   const conversation = [
