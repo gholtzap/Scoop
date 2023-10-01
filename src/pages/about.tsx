@@ -5,6 +5,7 @@ import Header from '../components/Header';
 
 import DefaultHeadshot from '../../public/headshots/default_headshot.jpg'
 import GavinHeadshot from '../../public/headshots/gavin_headshot.png'
+import AbdullahHeadshot from '../../public/headshots/abdullah_headshot.png'
 
 export default function About() {
 
@@ -14,7 +15,7 @@ export default function About() {
             school: 'University of Waterloo',
             major: 'Computer Engineering',
             graduationDate: 'April 2025',
-            image: DefaultHeadshot,
+            image: AbdullahHeadshot,
             website: 'https://github.com/Abdullah9340'
         },
         {
