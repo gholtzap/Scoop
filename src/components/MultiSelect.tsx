@@ -43,7 +43,7 @@ export default function MultiSelect() {
         <TextField
           {...params}
           variant="standard"
-          label="What Symptoms Are You Experiencing?"
+          label="What Are Your Symptoms?"
           placeholder="Search For Symptoms"
         />
       )}

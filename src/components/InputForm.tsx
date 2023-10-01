@@ -34,7 +34,7 @@ export default function InputForm() {
         <Accordion
           expanded={expanded}
           onChange={() => setExpanded(!expanded)}
-          sx={{ width: "500px" }}
+          sx={{ width: "300px" }}
         >
           <AccordionSummary
             expandIcon={<ExpandMoreIcon />}
