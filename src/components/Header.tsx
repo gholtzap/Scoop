@@ -24,10 +24,15 @@ export default function Header() {
                 </Link>
 
 
-                <div className="flex space-x-4">
+                <div className="flex space-x-16">
                     <Link href="/dashboard">
                         <span className="cursor-pointer text-bold text-[#95F3D9] text-xl hover:text-[#25D0AB] transition duration-200">
-                            Scoop
+                            Dashboard
+                        </span>
+                    </Link>
+                    <Link href="/input">
+                        <span className="cursor-pointer text-bold text-[#95F3D9] text-xl hover:text-[#25D0AB] transition duration-200">
+                            Report Symptoms
                         </span>
                     </Link>
                     <Link href="/about">

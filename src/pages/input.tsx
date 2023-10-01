@@ -8,9 +8,9 @@ function input() {
     <div>
       <Header />
       <div className="min-h-[100vh] sm:min-h-screen w-screen flex flex-col relative bg-[#2C2C2C] font-inter overflow-hidden">
-        <Box sx={{ marginTop: "100px" }}>
+        <div className='mx-auto mt-[150px]'>
           <InputForm />
-        </Box>
+        </div>
       </div>
     </div>
   );
