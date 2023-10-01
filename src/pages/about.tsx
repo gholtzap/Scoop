@@ -6,6 +6,7 @@ import Header from '../components/Header';
 import DefaultHeadshot from '../../public/headshots/default_headshot.jpg'
 import GavinHeadshot from '../../public/headshots/gavin_headshot.png'
 import AbdullahHeadshot from '../../public/headshots/abdullah_headshot.png'
+import JasonHeadshot from '../../public/headshots/jason_headshot.jpg'
 
 export default function About() {
 
@@ -31,7 +32,7 @@ export default function About() {
             school: 'University of Texas at Austin',
             major: 'Computer Science',
             graduationDate: 'May 2025',
-            image: DefaultHeadshot,
+            image: JasonHeadshot,
             website: 'https://github.com/jasonlee02'
 
         },
