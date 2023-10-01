@@ -1,8 +1,18 @@
 import React from 'react';
 import Link from "next/link";
 import { motion } from "framer-motion";
+import { useUser } from '../contexts/UserContext'; 
 
 export default function Header() {
+
+    const { user, setUser } = useUser();
+
+    const handleLogout = () => {
+        console.log('User logging out...');
+        setUser(null);
+    }
+    
+
     return (
         <motion.div
             initial={{ opacity: 0, y: -40 }}
@@ -40,16 +50,30 @@ export default function Header() {
                             About
                         </span>
                     </Link>
-                    <Link href="/register">
-                        <span className="cursor-pointer text-[#95F3D9] text-xl hover:text-[#25D0AB] transition duration-200">
-                            Register
+
+                    {user ? (
+                    <>
+                        <span className="text-[#95F3D9] text-xl mr-4">
+                            Logged in as {user.username}
                         </span>
-                    </Link>
-                    <Link href="/login">
-                        <span className="cursor-pointer px-4 py-2 bg-[#25D0AB] text-xl text-[#2C2C2C] rounded hover:bg-[#95F3D9] transition duration-200">
-                            Login
-                        </span>
-                    </Link>
+                        <button onClick={handleLogout} className="cursor-pointer px-4 py-2 bg-[#25D0AB] text-xl text-[#2C2C2C] rounded hover:bg-[#95F3D9] transition duration-200">
+                            Logout
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <Link href="/register">
+                            <span className="cursor-pointer text-[#95F3D9] text-xl hover:text-[#25D0AB] transition duration-200">
+                                Register
+                            </span>
+                        </Link>
+                        <Link href="/login">
+                            <span className="cursor-pointer px-4 py-2 bg-[#25D0AB] text-xl text-[#2C2C2C] rounded hover:bg-[#95F3D9] transition duration-200">
+                                Login
+                            </span>
+                        </Link>
+                    </>
+                )}
                 </div>
             </div>
         </motion.div>

@@ -3,9 +3,11 @@ import { AnimatePresence, motion } from "framer-motion";
 import React, { useState } from 'react';
 import { useRouter } from 'next/router';
 import Header from '../components/Header';
+import { useUser } from '../contexts/UserContext';
 
 export default function Login() {
     const router = useRouter();
+    const { setUser } = useUser();
 
     const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL
 
@@ -13,6 +15,8 @@ export default function Login() {
         email: "",
         password: ""
     });
+
+    const [loginMessage, setLoginMessage] = useState<string | null>(null);
 
     const handleLoginChange = (e: { target: { name: any; value: any; }; }) => {
         const { name, value } = e.target;
@@ -24,7 +28,9 @@ export default function Login() {
 
     const handleLoginSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-
+    
+        console.log("Attempting to log in with data:", loginData); 
+    
         try {
             const response = await fetch(`${SERVER_URL}/login`, {
                 method: 'POST',
@@ -36,22 +42,39 @@ export default function Login() {
                     password: loginData.password
                 })
             });
-
+    
             const data = await response.json();
-
+    
+            console.log("Server response:", data); 
+    
             if (response.status === 200) {
-                alert(data.message);
-                router.push('/');
+                setLoginMessage("Success! Logging you in...");
+                if (response.ok) {
+                    const userEmail = data.email;
+                    const userName = data.username;
+                 
+                    localStorage.setItem('currentUser', JSON.stringify({ email: userEmail, username: userName }));
+                 
+                    setUser({ email: userEmail, username: userName }); 
+                    console.log("User state updated with:", { email: userEmail, username: userName });
+                }
+                 
+                setUser({
+                    username: data.username,
+                    email: data.email
+                });
+                setTimeout(() => {
+                    router.push('/dashboard');
+                }, 1500);
             } else {
-                alert(data.message);
+                setLoginMessage(data.message);
             }
         } catch (error) {
-            console.error("Error during login:", error);
-            alert("Error during login. Please try again.");
+            console.error("Error during login:", error); 
+            setLoginMessage("Error during login. Please try again.");
         }
     }
-
-
+    
 
     return (
         <AnimatePresence>
@@ -74,6 +97,7 @@ export default function Login() {
                     >
                         Welcome Back to Scoop!
                     </motion.h1>
+
                     <form onSubmit={handleLoginSubmit}>
                         <motion.div
                             initial={{ opacity: 0, y: 40 }}
@@ -101,6 +125,11 @@ export default function Login() {
                                 placeholder="Password"
                                 className="p-2 rounded bg-[#2C2C2C] text-[#25D0AB] border-[#25D0AB]"
                             />
+                            {loginMessage && (
+                                <div className="text-center my-2 text-white">
+                                    {loginMessage}
+                                </div>
+                            )}
                         </motion.div>
 
                         <motion.div
@@ -114,7 +143,7 @@ export default function Login() {
                         >
                             <div className="flex items-center">
                                 <button
-                                    className="group rounded-full px-4 py-2 text-[13px] font-semibold transition-all flex items-center justify-center bg-[#01453D] text-[#25D0AB] active:scale-95 scale-100 duration-75 mr-4" // Added 'mr-4' for right margin
+                                    className="group rounded-full px-4 py-2 text-[13px] font-semibold transition-all flex items-center justify-center bg-[#01453D] text-[#25D0AB] active:scale-95 scale-100 duration-75 mr-4" 
                                     style={{
                                         boxShadow: "0 1px 1px #01453D, 0 1px 3px #01453D",
                                     }}

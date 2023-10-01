@@ -376,8 +376,10 @@ app.post("/login", async (req, res) => {
 
     const match = await bcrypt.compare(password, user.password);
     if (match) {
-      res.json({ message: "Login successful!" });
-    } else {
+      const { password, ...userWithoutPassword } = user.toObject();
+      res.json({ ...userWithoutPassword, message: "Login successful!" });
+   }
+    else {
       res.status(401).json({ message: "Invalid password!" });
     }
   } catch (error) {

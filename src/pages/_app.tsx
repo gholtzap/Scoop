@@ -3,13 +3,17 @@ import "leaflet/dist/leaflet.css";
 import "../styles/globals.css";
 import "@radix-ui/themes/styles.css";
 import { Theme } from "@radix-ui/themes";
+import { UserProvider } from '../contexts/UserContext';
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <Theme appearance="dark">
-      <Component {...pageProps} />
+      <UserProvider>
+        <Component {...pageProps} />
+      </UserProvider>
     </Theme>
   );
 }
+
 
 export default MyApp;
