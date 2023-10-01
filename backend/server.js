@@ -91,13 +91,20 @@ app.post("/analyze", async (req, res) => {
   }
 });
 
-async function getOutbreakAnalysis(zip, zipRow, population, symptoms) {
+async function getOutbreakAnalysis(
+  zip,
+  zipRow,
+  population,
+  symptoms,
+  symptomsCount
+) {
   const symptomSummary = Object.entries(symptoms)
     .map(
       ([symptom, count]) =>
         `${count} out of ${population} people have ${symptom}`
     )
     .join(", ");
+  console.log("COUNT", symptomsCount);
   const summary = `In my simulation video game, there is an area with a population of ${population} where ${symptomSummary} and details about the zipcode in area are: ${zipRow}. 
   Based on these symptoms, what real-life disease might be prevalent in my video game simulation?
   Note that there can be no significant disease prevalent If the number of symptoms is not significant enough compared to the population, you should return 'None'
@@ -107,7 +114,7 @@ async function getOutbreakAnalysis(zip, zipRow, population, symptoms) {
   "possibleDiseases": ["common cold": {severitylevel}, "influenza":{severitylevel}] // each disease in possibleDiseases should have a low, mild, moderate, severe, critical based on the given information 
 and if there are no potential diseases use ["none"]
   "safetyGuidelines":["{3 sentence safety guideline for disease such as common cold"},"{same for rest of possibleDiseases}"]
-  "percentageReported": {population / count of everyone with symptoms}
+  "percentageReported": {population / ${symptomsCount}}
   // also create fields for possible amount infected with listed possible Diseases
   // also create a field that describes population density
   // create fields for each symptom with count ex: "headache": int
@@ -132,7 +139,7 @@ and if there are no potential diseases use ["none"]
     }
   }
   `;
-  console.log("prompt", summary);
+  //console.log("prompt", summary);
   const conversation = [
     { role: "system", content: "You are a helpful assistant." },
     { role: "user", content: summary },
@@ -187,23 +194,15 @@ app.get("/analyze/:zip", async (req, res) => {
         .status(400)
         .json({ message: "Population data missing for this ZIP" });
     }
-    try {
-      zipRow = await getDataByZipcode(zip);
-      const symptomsData = utils.getSymptomsData(data.entries, 14);
-      const analysis = await getOutbreakAnalysis(
-        zip,
-        data.population,
-        symptomsData
-      );
-      res.json({ analysis });
-    } catch (error) {
-      return res.status(404).json({ error: error.message });
-    }
+
+    zipRow = await getDataByZipcode(zip);
+    const { symptomsSum, count } = utils.getSymptomsData(data.entries, 14);
     const analysis = await getOutbreakAnalysis(
       zip,
       zipRow,
       data.population,
-      data.symptoms
+      symptomsSum,
+      count
     );
     res.json({ analysis });
   } catch (error) {
