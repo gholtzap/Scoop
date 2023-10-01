@@ -95,8 +95,7 @@ const InfoCard: React.FC<SymptomCardProps> = ({ data, analysis }) => {
           <h3 className="text-2xl font-semibold text-[#25D0AB]">
             <div>
               <Flex direction="column">
-                <Heading size="1">ZipCode</Heading>
-                <Heading size="8">{data?.zip}</Heading>
+                <Heading size="6">Health and Safety Guidelines</Heading>
               </Flex>
             </div>
           </h3>

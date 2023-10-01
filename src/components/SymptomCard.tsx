@@ -30,6 +30,30 @@ const calculateColor = (count: number, population: number): string => {
   return `rgb(${redAmount}, ${greenAmount}, 0)`;
 };
 
+const reversedMapping: any = {
+  "fever": "Fever",
+  "fatigue": "Fatigue",
+  "cough": "Cough",
+  "shortnessOfBreath": "Shortness Of Breath",
+  "soreThroat": "Sore Throat",
+  "runnyNose": "Runny Nose",
+  "bodyAches": "Body Aches",
+  "headache": "Headache",
+  "chills": "Chills",
+  "nausea": "Nausea",
+  "diarrhea": "Diarrhea",
+  "lossOfAppetite": "Loss Of Appetite",
+  "sweating": "Sweating",
+  "jointPain": "Joint Pain",
+  "swollenLymphNodes": "Swollen Lymph Nodes",
+  "rash": "Rash",
+  "abdominalPain": "Abdominal Pain",
+  "dizziness": "Dizziness",
+  "lossOfTasteOrSmell": "Loss Of Taste Or Smell",
+  "chestPain": "Chest Pain"
+};
+
+
 const SymptomCard: React.FC<SymptomCardProps> = ({ data, analysis }) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
 
@@ -51,7 +75,7 @@ const SymptomCard: React.FC<SymptomCardProps> = ({ data, analysis }) => {
                         className="text-[#95F3D9] flex justify-between items-center mb-4 w-full"
                       >
                         <div className="flex flex-col w-3/4">
-                          <span className="mb-1">{symptom}</span>
+                          <span className="mb-1">{reversedMapping[symptom]}</span>
                           <div
                             className="h-3 rounded-full"
                             style={{
