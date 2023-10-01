@@ -48,11 +48,27 @@ const symptomSchema = new mongoose.Schema({
 const Symptom = mongoose.model("Symptom", symptomSchema, "zips");
 
 const symptoms = [
-    'fever', 'fatigue', 'cough', 'shortnessOfBreath', 'soreThroat', 'runnyNose', 
-    'bodyAches', 'headache', 'chills', 'nausea', 'diarrhea', 'lossOfAppetite', 'sweating',
-    'jointPain', 'swollenLymphNodes', 'rash', 'abdominalPain', 'dizziness', 'lossOfTasteOrSmell',
-    'chestPain'
-]
+  "fever",
+  "fatigue",
+  "cough",
+  "shortnessOfBreath",
+  "soreThroat",
+  "runnyNose",
+  "bodyAches",
+  "headache",
+  "chills",
+  "nausea",
+  "diarrhea",
+  "lossOfAppetite",
+  "sweating",
+  "jointPain",
+  "swollenLymphNodes",
+  "rash",
+  "abdominalPain",
+  "dizziness",
+  "lossOfTasteOrSmell",
+  "chestPain",
+];
 
 app.use(cors());
 app.use(express.json());
@@ -122,12 +138,46 @@ async function getOutbreakAnalysis(
 and if there are no potential diseases use ["none"]
   "safetyGuidelines":["{3 sentence safety guideline for disease such as common cold"},"{same for rest of possibleDiseases}"]
   "percentageReported": {population / ${symptomsCount}}
-  // also create fields for possible amount infected with listed possible Diseases
+  // also create fields for possible amount infected with listed possible Diseases. MAKE SURE each possibleDiseases exists as a key in this field
   // also create a field that describes population density
   // create fields for each symptom with count ex: "headache": int
   // also include zipCode: {zipCode}
   // also include population: {population}
   // and create an age distribution, vaccination Status, and comorbidities fields in this exact format
+  heres an example JSON. make sure to follow this EXACT FORMAT. every string in possibleDisease needs to correspond to each key in the amountInfected field
+  {
+    "possibleDiseases": ["common cold", "influenza"],
+    "safetyGuidelines": [
+      "Wash your hands frequently and avoid touching your face.",
+      "Cover your mouth and nose with a tissue or your elbow when coughing or sneezing.",
+      "Stay home if you are feeling sick and seek medical attention if necessary."
+    ],
+    "amountInfected"["common cold": 14, "influenza": 53],
+    "percentageReported": 0.116,
+    "common cold": 1014,
+    "influenza": 966,
+    "headache": 1298,
+    "fever": 1604,
+    "fatigue": 1824,
+    "cough": 1449,
+    "shortnessOfBreath": 1754,
+    "soreThroat": 966,
+    "runnyNose": 1014,
+    "bodyAches": 1261,
+    "chills": 1241,
+    "nausea": 1395,
+    "diarrhea": 1607,
+    "lossOfAppetite": 1405,
+    "sweating": 1482,
+    "jointPain": 1282,
+    "swollenLymphNodes": 1325,
+    "rash": 1463,
+    "abdominalPain": 1420,
+    "dizziness": 1326,
+    "lossOfTasteOrSmell": 2367,
+    "chestPain": 1396,
+    "zipCode": "91344",
+    "population": 52450,
     "ageDistribution": {
       "0-18": 5487,
       "19-35": 9765,
@@ -219,54 +269,53 @@ app.get("/analyze/:zip", async (req, res) => {
 });
 
 app.post("/postSymptoms", async (req, res) => {
-    const data = req.body
-    let zipcode = data['zipCode']
+  const data = req.body;
+  let zipcode = data["zipCode"];
 
-    const query = await Symptom.findOne({ zip: zipcode });
+  const query = await Symptom.findOne({ zip: zipcode });
 
-    if (query == null){
-        return res.status(500).json({ message: 'invalid zip code' });
-    }
+  if (query == null) {
+    return res.status(500).json({ message: "invalid zip code" });
+  }
 
-    const currentDate = new Date();
-    const currentTime = currentDate.getTime();
-    const day = Math.floor(currentTime / (1000 * 60 * 60 * 24))
+  const currentDate = new Date();
+  const currentTime = currentDate.getTime();
+  const day = Math.floor(currentTime / (1000 * 60 * 60 * 24));
 
-    let entries = query['entries']
-    console.log(entries)
-    if (entries[entries.length - 1]['day'] == day){
-        symptoms.forEach((item, index) => {
-            entries[entries.length - 1]['symptoms'][item] += data[item];
-        })
-    } else {
-        let newSymptoms = {}
-        symptoms.forEach((item, index) => {
-            newSymptoms[item] = data[item];
-        })
-        entries.push({
-            'day': day,
-            'symptoms': newSymptoms
-        })
-    }
+  let entries = query["entries"];
+  console.log(entries);
+  if (entries[entries.length - 1]["day"] == day) {
+    symptoms.forEach((item, index) => {
+      entries[entries.length - 1]["symptoms"][item] += data[item];
+    });
+  } else {
+    let newSymptoms = {};
+    symptoms.forEach((item, index) => {
+      newSymptoms[item] = data[item];
+    });
+    entries.push({
+      day: day,
+      symptoms: newSymptoms,
+    });
+  }
 
-    console.log(entries)
+  console.log(entries);
 
-    try {
-        await Symptom.findOneAndUpdate(
-            { zip: zipcode },
-            {
-                entries: entries
-            },
-            { upsert: true }
-        );
-        console.log(`Processed ZIP: ${zipcode}`);
-        return res.status(200).json({ message: 'success' });
-    } catch (error) {
-        console.error(`Error processing ZIP: ${zipcode}`, error);
-        return res.status(500).json({ message: 'failed upload' });
-    }
-
-})
+  try {
+    await Symptom.findOneAndUpdate(
+      { zip: zipcode },
+      {
+        entries: entries,
+      },
+      { upsert: true }
+    );
+    console.log(`Processed ZIP: ${zipcode}`);
+    return res.status(200).json({ message: "success" });
+  } catch (error) {
+    console.error(`Error processing ZIP: ${zipcode}`, error);
+    return res.status(500).json({ message: "failed upload" });
+  }
+});
 
 const userSchema = new mongoose.Schema({
   username: String,
