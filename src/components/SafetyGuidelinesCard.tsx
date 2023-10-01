@@ -11,7 +11,9 @@ interface SymptomCardProps {
 
 interface HealthData {
   possibleDiseases: string[];
-  safetyGuidelines: string[];
+  safetyGuidelines: {
+    [disease: string]: string;
+  };
   percentageReported: number;
   amountInfected: {
     [disease: string]: number;
@@ -73,7 +75,6 @@ const parseJsonString = (jsonString: string | null): JSON => {
 const InfoCard: React.FC<SymptomCardProps> = ({ data, analysis }) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const jsonData: HealthData = JSON.parse(analysis as string);
-  console.log(jsonData)
   const {
     possibleDiseases,
     safetyGuidelines,
@@ -99,59 +100,16 @@ const InfoCard: React.FC<SymptomCardProps> = ({ data, analysis }) => {
               </Flex>
             </div>
           </h3>
-          <div>
-            {possibleDiseases.map((disease) => (
-              <Card>
-                <div className="flex align-center justify-between">
-                  <span>{disease}</span>
-                  <div className="flex align-center justify-center gap-1">
-                    {amountInfected[disease]}
-                    <PersonIcon />
-                  </div>
-                </div>
-              </Card>
-            ))}
+        </div>
+        {Object.keys(safetyGuidelines).map((guideline) => (
+          <div className="border-t border-[#25D0AB] pt-4">
+            <h4 className="text-lg font-semibold text-[#25D0AB] mb-2">
+              {guideline}
+            </h4>
+            <p className="text-[#95F3D9]">{safetyGuidelines[guideline]}</p>
           </div>
-        </div>
-        <div className="border-t border-[#25D0AB] pt-4">
-          <h4 className="text-lg font-semibold text-[#25D0AB] mb-2">
-            Population
-          </h4>
-          <p className="text-[#95F3D9]">{data?.population}</p>
-        </div>
-
-        <div className="border-t border-[#25D0AB] pt-4">
-          <h4 className="text-lg font-semibold text-[#25D0AB] mb-2">
-            % of Population Reported
-          </h4>
-          <p className="text-[#95F3D9]">{percentageReported}%</p>
-        </div>
-        <div className="border-t border-[#25D0AB] pt-4">
-          <h4 className="text-lg font-semibold text-[#25D0AB] mb-2">
-            Age Distribution
-          </h4>
-          <p className="text-[#95F3D9]">0-18: {ageDistribution["0-18"]}</p>
-          <p className="text-[#95F3D9]">19-35: {ageDistribution["19-35"]}</p>
-          <p className="text-[#95F3D9]">36-60: {ageDistribution["36-60"]}</p>
-          <p className="text-[#95F3D9]">61+: {ageDistribution["61+"]}</p>
-        </div>
-        <div className="border-t border-[#25D0AB] pt-4">
-          <h4 className="text-lg font-semibold text-[#25D0AB] mb-2">
-            Possible Comorbidities
-          </h4>
-          {/* {comorbidities.map((morbidity) => (
-            <Card>
-              <div className="flex align-center justify-between">
-                <span>{morbidity}</span>
-              </div>
-            </Card> 
-          ))} */}
-        </div>
+        ))}
       </div>
-      {/* <div className="p-6 bg-[#2C2C2C] shadow-lg rounded-lg space-y-4 max-w-md border-2 border-[#25D0AB]">
-                <h4 className="text-lg font-semibold text-[#25D0AB] mb-2">Analysis</h4>
-                <p className="text-[#95F3D9]">{analysis}</p>
-            </div> */}
     </div>
   );
 };

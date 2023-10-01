@@ -197,7 +197,7 @@ and if there are no potential diseases use ["none"]
       "Respiratory Conditions"
     ]
   }
-  MAKE SURE TO MAKE EACH SAFETY GUIDELINE 4-5 SENTENCES EACH
+  MAKE SURE TO MAKE EACH SAFETY GUIDELINE 4-5 SENTENCES EACH. Do not embed the JSON, do not print any text other than the JSON, the output should match the format exactly with no extra text. Make sure to include every key in the JSON.
   `;
   //console.log("prompt", summary);
   const conversation = [

@@ -71,7 +71,6 @@ const parseJsonString = (jsonString: string | null): JSON => {
 const InfoCard: React.FC<SymptomCardProps> = ({ data, analysis }) => {
   const [isExpanded, setIsExpanded] = React.useState(false);
   const jsonData: HealthData = JSON.parse(analysis as string);
-  console.log(jsonData)
   const {
     possibleDiseases,
     safetyGuidelines,
