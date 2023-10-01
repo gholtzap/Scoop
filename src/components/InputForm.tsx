@@ -19,6 +19,7 @@ export default function InputForm() {
     color: "white", // Text color
     marginTop: "30px",
     borderRadius: "5px",
+    fontFamily: 'Poppins',
   };
 
   const darkTheme = createTheme({
