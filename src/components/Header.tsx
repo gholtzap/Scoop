@@ -16,15 +16,17 @@ export default function Header() {
 
         >
             <div className="flex justify-between items-center">
-                <Link href="/">
-                    <span className="cursor-pointer font-extrabold text-[#25D0AB] text-3xl hover:text-[#95F3D9] transition duration-200">
-                        Scoop
-                    </span>
-                </Link>
+            <Link href="/" className="flex items-center space-x-2">
+    <img src="./scoop_logo.svg" alt="Scoop Logo" />
+    <span className="cursor-pointer font-extrabold text-[#25D0AB] text-4xl hover:text-[#95F3D9] transition duration-200">
+        Scoop
+    </span>
+</Link>
+
 
                 <div className="flex space-x-4">
                     <Link href="/dashboard">
-                        <span className="cursor-pointer text-[#006D5B] text-xl hover:text-[#25D0AB] transition duration-200">
+                        <span className="cursor-pointer text-bold text-[#95F3D9] text-xl hover:text-[#25D0AB] transition duration-200">
                             Scoop
                         </span>
                     </Link>
