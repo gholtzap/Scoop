@@ -17,8 +17,7 @@ export default function Home() {
           <img src="./scoop_logo.svg" alt="Scoop Logo" className="h-20 w-auto" />
           <h1 className="text-[#25D0AB] font-bold text-7xl">Scoop</h1>
         </header>
-
-
+        
         <svg
           style={{ filter: "contrast(125%) brightness(110%)" }}
           className="fixed z-[1] w-full h-full opacity-[35%]"

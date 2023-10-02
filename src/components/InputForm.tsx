@@ -77,23 +77,23 @@ export default function InputForm() {
 
     try {
       const response = await fetch(`${SERVER_URL}/postSymptoms`, {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(body)
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(body)
       });
 
       const data = await response.json();
 
       if (response.status === 200) {
-          alert(data.message);
+        alert(data.message);
       } else {
-          alert(data.message);
+        alert(data.message);
       }
     } catch (error) {
-        console.error("Error during posting:", error);
-        alert("Error during posting. Please try again");
+      console.error("Error during posting:", error);
+      alert("Error during posting. Please try again");
     }
 
     console.log(body);

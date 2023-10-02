@@ -103,20 +103,7 @@ function MapComponent({
               const populationContent = data?.population
                 ? `Population: ${data.population}`
                 : "";
-
-              // popup with all data - use for debugging
-              // const popupContent = `ZIP Code: ${zipCode} ${symptomsContent} ${populationContent} - Analysis: ${analysis}`;
-
               const popupContent = `ZIP Code: ${zipCode} \nAnalysis: ${analysis}`;
-
-              /*
-                            layer
-                                .bindPopup(popupContent, {
-                                    autoPan: false,
-                                    offset: L.point(0, -20),
-                                })
-                                .openPopup();
-                                */
             });
           },
         }).addTo(map);

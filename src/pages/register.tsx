@@ -7,8 +7,6 @@ import Link from "next/link";
 
 export default function Signup() {
     const router = useRouter();
-
-
     const SERVER_URL = process.env.NEXT_PUBLIC_SERVER_URL
 
     const [formData, setFormData] = useState({
@@ -19,7 +17,6 @@ export default function Signup() {
     });
 
     const [registrationMessage, setRegistrationMessage] = useState<string | null>(null);
-
 
     const handleChange = (e: { target: { name: any; value: any; }; }) => {
         const { name, value } = e.target;
@@ -66,7 +63,6 @@ export default function Signup() {
             setRegistrationMessage("Error during registration. Please try again.");
         }
     }
-
 
     return (
         <AnimatePresence>

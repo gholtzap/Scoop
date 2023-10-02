@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const MONGODB_URI = process.env.MONGODB_URI
 const SERVER_URL = process.env.SERVER_URL;
-// const SERVER_PORT = process.env.SERVER_PORT;
+const SERVER_PORT = process.env.SERVER_PORT;
 
 const csvFilePath = './California_Zip_Codes.csv';
 
@@ -29,8 +29,8 @@ const symptoms = [
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
 db.once('open', function () {
-    console.log('Connected to MongoDB');
-    console.log('Connected to Database:', db.name);
+    console.log('[INFO] Connected to MongoDB');
+    console.log('[INFO] Connected to Database:', db.name);
 
     const symptomSchema = new mongoose.Schema({
         zip: String,
@@ -48,13 +48,15 @@ db.once('open', function () {
 
     const Symptom = mongoose.model('Symptom', symptomSchema, 'zips');
     const results = [];
-
+    console.log('[INFO] Reading CSV file:', csvFilePath);
     fs.createReadStream(csvFilePath)
         .pipe(csv())
         .on('data', (row) => {
             results.push(row);
         })
         .on('end', async () => {
+            console.log(`[INFO] Finished reading CSV. Total rows: ${results.length}`);
+            
             for (const row of results) {
                 const zip = row.ZIP_CODE;
                 const population = Number(row.POPULATION);
@@ -68,9 +70,9 @@ db.once('open', function () {
                         },
                         { upsert: true }
                     );
-                    console.log(`Processed ZIP: ${zip}`);
+                    console.log(`[SUCCESS] Processed ZIP: ${zip}`);
                 } catch (error) {
-                    console.error(`Error processing ZIP: ${zip}`, error);
+                    console.error(`[ERROR] Error processing ZIP: ${zip} -`, error.message);
                 }
             }
         });
@@ -102,6 +104,7 @@ function generateRandomSymptoms(population, lambda){
 
 
 function generateRandomEntries(population) {
+    console.log(`[INFO] Generating random entries for population: ${population}`);
     if (population < 0){ population = 0 }
 
     const lambda = 500;

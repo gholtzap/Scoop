@@ -28,9 +28,9 @@ export default function Login() {
 
     const handleLoginSubmit = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
-    
-        console.log("Attempting to log in with data:", loginData); 
-    
+
+        console.log("Attempting to log in with data:", loginData);
+
         try {
             const response = await fetch(`${SERVER_URL}/login`, {
                 method: 'POST',
@@ -42,23 +42,23 @@ export default function Login() {
                     password: loginData.password
                 })
             });
-    
+
             const data = await response.json();
-    
-            console.log("Server response:", data); 
-    
+
+            console.log("Server response:", data);
+
             if (response.status === 200) {
                 setLoginMessage("Success! Logging you in...");
                 if (response.ok) {
                     const userEmail = data.email;
                     const userName = data.username;
-                 
+
                     localStorage.setItem('currentUser', JSON.stringify({ email: userEmail, username: userName }));
-                 
-                    setUser({ email: userEmail, username: userName }); 
+
+                    setUser({ email: userEmail, username: userName });
                     console.log("User state updated with:", { email: userEmail, username: userName });
                 }
-                 
+
                 setUser({
                     username: data.username,
                     email: data.email
@@ -70,11 +70,11 @@ export default function Login() {
                 setLoginMessage(data.message);
             }
         } catch (error) {
-            console.error("Error during login:", error); 
+            console.error("Error during login:", error);
             setLoginMessage("Error during login. Please try again.");
         }
     }
-    
+
 
     return (
         <AnimatePresence>
@@ -143,7 +143,7 @@ export default function Login() {
                         >
                             <div className="flex items-center">
                                 <button
-                                    className="group rounded-full px-4 py-2 text-[13px] font-semibold transition-all flex items-center justify-center bg-[#01453D] text-[#25D0AB] active:scale-95 scale-100 duration-75 mr-4" 
+                                    className="group rounded-full px-4 py-2 text-[13px] font-semibold transition-all flex items-center justify-center bg-[#01453D] text-[#25D0AB] active:scale-95 scale-100 duration-75 mr-4"
                                     style={{
                                         boxShadow: "0 1px 1px #01453D, 0 1px 3px #01453D",
                                     }}

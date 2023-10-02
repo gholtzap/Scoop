@@ -13,6 +13,7 @@ require("dotenv").config();
 
 const MONGODB_URI = process.env.MONGODB_URI;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY;
+const SERVER_PORT = process.env.SERVER_PORT;
 
 mongoose.set("debug", true);
 mongoose.connect(MONGODB_URI, {
@@ -70,29 +71,28 @@ server.use(express.json());
 
 server.get("/symptoms/:zip", async (req, res) => {
   try {
-    console.log("Database Connection State:", db.readyState);
-
+    console.log("[INFO] Fetching symptoms for ZIP code:", req.params.zip);
+    
     const zip = req.params.zip;
-    console.log("Requested ZIP:", zip);
-
     const symptoms = await Symptom.findOne({ zip: zip });
-    console.log("Database Result:", symptoms);
-
+    
     if (symptoms) {
+      console.log("[SUCCESS] Symptoms data found for ZIP:", zip);
       res.json(symptoms);
     } else {
+      console.log("[ERROR] No symptoms data found for ZIP:", zip);
       res.status(404).json({ message: "Not found" });
     }
   } catch (error) {
-    console.error("Error fetching data:", error);
+    console.error("[ERROR] Failed to fetch symptoms data for ZIP:", zip, "-", error.message);
     res.status(500).json({ message: error.message });
   }
 });
 
 server.post("/analyze", async (req, res) => {
-  const { summary } = req.body;
-
   try {
+    console.log("[INFO] Analyzing summary:", req.body.summary);
+    
     const completion = await openai.ChatCompletion.create({
       model: "gpt-3.5-turbo",
       messages: [
@@ -102,9 +102,10 @@ server.post("/analyze", async (req, res) => {
     });
 
     const insight = completion.choices[0].message.content.trim();
-    res.json({ insight });
+    console.log("[SUCCESS] Received analysis result from OpenAI for summary:", req.body.summary);
+    res.json({ insight: completion.choices[0].message.content.trim() });
   } catch (error) {
-    console.error("Error querying OpenAI:", error);
+    console.error("[ERROR] Failed to analyze summary:", req.body.summary, "-", error.message);
     res.status(500).json({ message: error.message });
   }
 });
@@ -116,6 +117,8 @@ async function getOutbreakAnalysis(
   symptoms,
   symptomsCount
 ) {
+  console.log("[INFO] Preparing summary for outbreak analysis based on provided data.");
+
   const symptomSummary = Object.entries(symptoms)
     .map(
       ([symptom, count]) =>
@@ -194,7 +197,7 @@ and if there are no potential diseases use ["none"]
   }
   MAKE SURE TO MAKE EACH SAFETY GUIDELINE 4-5 SENTENCES EACH. Do not embed the JSON, do not print any text other than the JSON, the output should match the format exactly with no extra text. Make sure to include every key in the JSON.
   `;
-  //console.log("prompt", summary);
+  console.log("[SUCCESS] Outbreak analysis completed.");
   const conversation = [
     { role: "system", content: "You are a helpful assistant." },
     { role: "user", content: summary },
@@ -209,9 +212,12 @@ and if there are no potential diseases use ["none"]
 }
 
 function getDataByZipcode(zip) {
+  console.log("[INFO] Fetching data for ZIP code:", zip);
+  
   return new Promise((resolve, reject) => {
     let matchedRow = null;
     let headers = null;
+    
     fs.createReadStream("public/California_Zip_Codes.csv")
       .pipe(csv())
       .on("data", (row) => {
@@ -224,11 +230,10 @@ function getDataByZipcode(zip) {
       })
       .on("end", () => {
         if (matchedRow) {
-          const rowData = headers
-            .map((header) => `${header} = ${matchedRow[header]}`)
-            .join(", ");
+          console.log("[SUCCESS] Data found for ZIP code:", zip);
           resolve(rowData);
         } else {
+          console.error("[ERROR] No data found for ZIP code:", zip);
           reject(new Error(`No data found for ZIP code '${zip}'`));
         }
       });
