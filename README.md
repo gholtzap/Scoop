@@ -24,7 +24,7 @@ Presentation: https://youtu.be/ift1Eg6mtg4
 
 ## Features
 
-- Report your symptoms if they are feeling sick.
+- Report your symptoms if you are feeling sick.
 - View what symptoms your zip code is experiencing.
 - See if there are any disease outbreaks in your area.
 - Read health and safety guidelines tailored to the area of interest.
